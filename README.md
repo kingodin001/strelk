@@ -1,4 +1,4 @@
-# STRELK / Стрелк — Точный выстрел
+# STRELK / Стрелк — Точный выстрел 0.2.0
 
 **Original Android game inspired by the timing-puzzle genre.** This is an independent implementation written in Java and Canvas, with procedural artwork. It contains no assets, code, level files or third-party advertisement placements copied from `com.codef.arrow`.
 
@@ -13,7 +13,7 @@
 
 ## Build debug APK
 
-Choose Actions > **Android debug APK** > Run workflow, or let it run on pushes to `main`. Wait for green success, open the build, download artifact `strelk-0.1.0-debug-apk`. Unzip the artifact, then install `app-debug.apk` on Android.
+Choose Actions > **Android debug APK** > Run workflow, or let it run on pushes to `main`. Wait for green success, open the build, download artifact `strelk-0.2.0-debug-apk`. Unzip the artifact, then install `app-debug.apk` on Android.
 
 Local Android Studio build: open this folder, sync Gradle, Build > Build APK(s). Requires JDK 17, Android SDK 35, Gradle 8.10.2 (configured by CI). The source ZIP doesn't include a Gradle wrapper; Android Studio can select an installed Gradle version.
 
@@ -39,7 +39,7 @@ This is a **static package analysis** plus public screenshots/descriptions, **no
 
 ## Original design
 
-Deep navy background, mint-colored precision arrows, modern central hub, amber reward/coin markers, original name/labels and cosmetics. Builds from scratch and intentionally differs from the reference game's black pins on cream background.
+Minimal cream-colored gameplay field, black circular hub, numbered black projectiles on thin shafts, and small vector arrowheads incorporated within those shafts. Upper toolbar includes achievements, store, level selection and settings. These visuals are drawn independently in Java Canvas, rather than transferred from the reference APK. Initial configurations are original procedural levels and are not verified identical to those in the reference game.
 
 ## Test game mechanics
 
