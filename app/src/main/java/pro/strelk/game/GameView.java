@@ -93,7 +93,7 @@ public final class GameView extends View {
         line(c,33,18,17,34,BLACK,2.4f);line(c,17,34,33,50,BLACK,2.4f);
         text(c,title,icons?160:210,44,23,BLACK,true);
         if(icons){
-            navIcon(c,284,"trophy");navIcon(c,326,"shop");navIcon(c,368,"levels");navIcon(c,407,"settings");
+            navIcon(c,284,"trophy");navIcon(c,326,"shop");navIcon(c,368,"levels");navIcon(c,399,"settings");
         }
     }
     private void navIcon(Canvas c,float x,String what){
@@ -281,7 +281,7 @@ public final class GameView extends View {
         if(x>=263){
             if(x<305)screen=Screen.TROPHIES;
             else if(x<347)screen=Screen.SHOP;
-            else if(x<387){levelPage=(storage.level()-1)/25;screen=Screen.LEVELS;}
+            else if(x<382){levelPage=(storage.level()-1)/25;screen=Screen.LEVELS;}
             else screen=Screen.SETTINGS;
             sound(0);return true;
         }
