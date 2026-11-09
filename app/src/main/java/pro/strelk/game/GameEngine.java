@@ -70,17 +70,7 @@ public final class GameEngine {
         if (toLaunch == 0) state = State.WON;
     }
 
-    /** Rewarded continue: only call after the ad network confirms the reward event. */
-    public void continueAfterReward() {
-        if (state != State.LOST) return;
-        // Rotate one troublesome arrow out to ensure the player has a fresh attempt;
-        // already mounted arrows persist, and the failed projectile remains pending.
-        state = State.PLAYING;
-        flightRemaining = 0;
-        rotation = normalize(rotation + .32);
-    }
-
-    /** Only purchasable with real earned coins or confirmed rewarded ad. */
+    /** Optional assist mechanism; no external services required. */
     public boolean clearOneArrow() {
         if (state != State.PLAYING || localAngles.size() <= level.angles.length) return false;
         localAngles.remove(localAngles.size() - 1);

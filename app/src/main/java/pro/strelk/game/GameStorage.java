@@ -17,9 +17,6 @@ public final class GameStorage {
     }
     public int wins() { return Math.max(0, pref.getInt("wins",0)); }
     public boolean sound() { return pref.getBoolean("sound",true); }
-    public int getInterstitialCount() { return pref.getInt("interstitial_count",0); }
-    public long lastInterstitialAt() { return pref.getLong("last_interstitial",0); }
-    public void recordInterstitial(long now) { pref.edit().putLong("last_interstitial",now).putInt("interstitial_count",getInterstitialCount()+1).apply(); }
     public void sound(boolean enable) { pref.edit().putBoolean("sound",enable).apply(); }
     public void earn(int amount) { pref.edit().putInt("coins",coins()+Math.max(0,amount)).apply(); }
     public boolean spend(int amount) {

@@ -25,20 +25,19 @@ public final class GameView extends View {
     private static final int[] SKIN_PRICES={0,250,500,750};
     private final Paint p=new Paint(Paint.ANTI_ALIAS_FLAG);
     private final GameStorage storage;
-    private final AdsController ads;
     private final ToneGenerator tones;
     private GameEngine engine;
     private Screen screen=Screen.HOME;
     private long lastFrame=0;
-    private boolean paused=false, doubled=false;
+    private boolean paused=false;
     private float scale=1, ox=0, oy=0;
     private String toast="";
     private long toastUntil=0;
     private int levelPage=0;
 
-    public GameView(Context context,GameStorage storage,AdsController ads) {
+    public GameView(Context context,GameStorage storage) {
         super(context);
-        this.storage=storage;this.ads=ads;
+        this.storage=storage;
         this.engine=new GameEngine(storage.level());
         ToneGenerator t;
         try{t=new ToneGenerator(AudioManager.STREAM_MUSIC,35);}catch(Exception ex){t=null;}
@@ -65,7 +64,7 @@ public final class GameView extends View {
         double dt=Math.min(.08,(now-lastFrame)/1e9);lastFrame=now;
         if(!paused && screen==Screen.PLAY)engine.tick(dt);
         if(screen==Screen.PLAY && engine.state()!=GameEngine.State.PLAYING){
-            if(engine.state()==GameEngine.State.WON){storage.win(engine.level().index);doubled=false;screen=Screen.WIN;sound(2);}
+            if(engine.state()==GameEngine.State.WON){storage.win(engine.level().index);screen=Screen.WIN;sound(2);}
             else{screen=Screen.LOSE;sound(1);}
         }
         float vw=getWidth(),vh=getHeight();
@@ -118,7 +117,7 @@ public final class GameView extends View {
         }
     }
     private void drawHome(Canvas c){
-        header(c,"STRELK",true);
+        header(c,"ARROWS",true);
         text(c,"ТОЧНОСТЬ РЕШАЕТ ВСЁ",210,156,20,BLACK,true);
         text(c,"ВЫБЕРИ МОМЕНТ ДЛЯ ВЫСТРЕЛА",210,185,13,MUTED,false);
         // Real current-level preview, not a large decorative dashboard.
@@ -200,11 +199,9 @@ public final class GameView extends View {
         if(win){
             text(c,"+"+(20+Math.min(80,engine.level().index/15))+" МОНЕТ",210,488,23,BLACK,true);
             primaryButton(c,51,587,369,651,"СЛЕДУЮЩИЙ УРОВЕНЬ");
-            if(ads.readyForReward() && !doubled)secondaryButton(c,51,669,369,734,"×2 МОНЕТЫ ЗА РЕКЛАМУ");
         }else{
             text(c,"Попробуй попасть между стрелами",210,497,15,MUTED,false);
             primaryButton(c,51,587,369,651,"ПОВТОРИТЬ");
-            if(ads.readyForReward())secondaryButton(c,51,669,369,734,"ПРОДОЛЖИТЬ ЗА РЕКЛАМУ");
         }
         secondaryButton(c,51,778,369,833,"НА ГЛАВНУЮ");
     }
@@ -222,8 +219,7 @@ public final class GameView extends View {
             String label=storage.skin()==i?"ВЫБРАНО":storage.ownsSkin(i)?"ВЫБРАТЬ":"◈ "+SKIN_PRICES[i];
             text(c,label,235,y+76,16,MUTED,true);
         }
-        if(ads.readyForReward())primaryButton(c,52,739,368,800,"+150 МОНЕТ ЗА РЕКЛАМУ");
-        else text(c,"БОНУСЫ ЗА ПОБЕДЫ",210,825,15,MUTED,false);
+        text(c,"БОНУСЫ ЗА ПОБЕДЫ",210,825,15,MUTED,false);
     }
     private void drawSettings(Canvas c){
         header(c,"НАСТРОЙКИ",false);
@@ -232,7 +228,6 @@ public final class GameView extends View {
         outline(c,48,412,372,530,13,GRAY,1.5f);
         text(c,"ПРОЙДЕНО УРОВНЕЙ",210,454,17,MUTED,true);
         text(c,String.valueOf(Math.max(0,storage.level()-1)),210,497,32,BLACK,true);
-        text(c,"РЕКЛАМНЫЕ БОНУСЫ ДОБРОВОЛЬНЫ",210,736,13,MUTED,false);
     }
     private void drawTrophies(Canvas c){
         header(c,"ДОСТИЖЕНИЯ",false);
@@ -303,16 +298,12 @@ public final class GameView extends View {
             case WIN:
                 if(hit(x,y,51,579,369,659)){
                     if(engine.level().index>=LevelFactory.TOTAL){screen=Screen.HOME;message("ВСЕ УРОВНИ ПРОЙДЕНЫ");}
-                    else{startLevel(storage.level());ads.showInterstitialAfterLevel(storage);}
-                }else if(hit(x,y,51,663,369,740)&&!doubled){
-                    if(ads.showReward(()->{if(!doubled){doubled=true;storage.earn(20+Math.min(80,engine.level().index/15));message("МОНЕТЫ ЗАЧИСЛЕНЫ");}}))sound(0);
+                    else{startLevel(storage.level());}
                 }else if(hit(x,y,51,769,369,845))screen=Screen.HOME;
                 break;
             case LOSE:
                 if(hit(x,y,51,579,369,659))startLevel(engine.level().index);
-                else if(hit(x,y,51,663,369,740)){
-                    if(ads.showReward(()->{engine.continueAfterReward();screen=Screen.PLAY;message("ПРОДОЛЖАЙ");}))sound(0);
-                }else if(hit(x,y,51,769,369,845))screen=Screen.HOME;
+                else if(hit(x,y,51,769,369,845))screen=Screen.HOME;
                 break;
             case SHOP:
                 for(int i=0;i<4;i++){
@@ -323,7 +314,6 @@ public final class GameView extends View {
                         else message("НЕ ХВАТАЕТ МОНЕТ");break;
                     }
                 }
-                if(hit(x,y,52,739,368,800))ads.showReward(()->{storage.earn(150);message("+150 МОНЕТ");});
                 break;
             case SETTINGS:
                 if(hit(x,y,48,299,372,363)){storage.sound(!storage.sound());sound(0);}
